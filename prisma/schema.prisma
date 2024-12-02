@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id])
+  participants User[]   @relation("EventParticipants") // Many-to-many relation
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  image         String?
+  password      String
+  emailVerified DateTime?
+  events        Event[]   @relation("EventParticipants") // Many-to-many relation
+  Event         Event[]
+}
